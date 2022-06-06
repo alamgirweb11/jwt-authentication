@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -53,5 +54,31 @@ class UserController extends Controller
               'message' => $message,
               'token' => $token,
          ], $this->successCode);
+    }
+
+    // get user profile
+    public function profile(){
+         $user = Auth::user();
+         if($user){
+             $message['message'] = $user->name."'s".' Profile';
+            return response()->json([
+                'success' => $message,
+                'data' => $user,
+            ], $this->successCode);
+         }else{
+            $message['message'] = 'You have to login first.';
+            return response()->json([
+                'error' => $message,
+            ], 401);
+         }
+    }
+
+    // logout
+    public function logout(){
+          Auth::logout();
+          $message['message'] = 'You are logged out.';
+          return response()->json([
+                  'message' => $message,
+          ], $this->successCode);
     }
 }
